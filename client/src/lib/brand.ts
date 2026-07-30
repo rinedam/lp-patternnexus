@@ -182,6 +182,43 @@ export const pipeline = [
   },
 ] as const;
 
+/**
+ * O time.
+ *
+ * PENDENTE: cargo de cada socio, e o sobrenome de quem quiser aparecer com ele.
+ *
+ * Os primeiros nomes vieram do arquivo de cada foto, entao sao reais. Os cargos
+ * NAO existem ainda, e por isso estao escritos como pendencia que aparece na
+ * tela em vez de comentario aqui: um cargo inventado passaria despercebido numa
+ * revisao, "Cargo pendente" impresso embaixo do rosto nao passa.
+ *
+ * As fotos ja estavam em client/public/images sem uso, e o ideas.md listava
+ * "fotografia real da equipe" como pendencia em aberto. Foram feitas na paleta
+ * da marca - fundo preto e luz de contorno no verde do acento - o que e o
+ * motivo de o retrato na secao nao precisar de cartao em volta: ele encosta no
+ * fundo da pagina e se funde sozinho.
+ */
+export const team = [
+  {
+    id: "rick",
+    name: "Rick",
+    role: "Cargo pendente",
+    photo: "/images/socio-rick.jpeg",
+  },
+  {
+    id: "joaov",
+    name: "João V.",
+    role: "Cargo pendente",
+    photo: "/images/socio-joaov.jpeg",
+  },
+  {
+    id: "rinedam",
+    name: "Rinedam",
+    role: "Cargo pendente",
+    photo: "/images/socio-rinedam.jpeg",
+  },
+] as const;
+
 export const footerColumns = [
   {
     title: "Capacidades",
@@ -202,3 +239,4 @@ export type Capability = (typeof capabilities)[number];
 export type ProcessStep = (typeof process)[number];
 export type PipelineStage = (typeof pipeline)[number];
 export type Standard = (typeof standards)[number];
+export type TeamMember = (typeof team)[number];

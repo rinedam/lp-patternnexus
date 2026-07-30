@@ -5,6 +5,7 @@ import Standard from "@/components/Standard";
 import Capabilities from "@/components/Capabilities";
 import Process from "@/components/Process";
 import Pipeline from "@/components/Pipeline";
+import Team from "@/components/Team";
 import NexusHand from "@/components/NexusHand";
 import Contact from "@/components/Contact";
 import { CinematicFooter } from "@/components/ui/motion-footer";
@@ -35,6 +36,7 @@ export default function Home() {
         <Capabilities />
         <Process />
         <Pipeline />
+        <Team />
         <NexusHand />
         <Contact />
       </main>
