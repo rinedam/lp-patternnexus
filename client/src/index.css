@@ -1,0 +1,521 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  As variantes de movimento sao redefinidas para enxergar a classe .force-motion
+  que lib/motion-preference.ts poe no <html>. Sem isso o override ficaria meio
+  aplicado e quebraria layout: `lg:motion-safe:` em Pipeline e Standard nao e
+  enfeite, e o que troca lista empilhada por trilho horizontal — o mesmo layout
+  que o gsap.matchMedia (ja coberto pelo patch de matchMedia) pina. As duas
+  pontas precisam concordar, ou o pin roda sobre um layout que nao existe.
+*/
+@custom-variant motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @slot;
+  }
+  html.force-motion & {
+    @slot;
+  }
+}
+
+@custom-variant motion-reduce {
+  @media (prefers-reduced-motion: reduce) {
+    html:not(.force-motion) & {
+      @slot;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pattern Nexus - sistema visual
+   ---------------------------------------------------------------------------
+   Tema travado em escuro. O site inteiro usa uma unica paleta: nenhuma secao
+   inverte para claro no meio da pagina.
+
+   Acento unico: --brand (#2DD4A7). Contraste verificado contra o fundo
+   (#05070B) em 10.6:1, e texto escuro sobre o acento tambem em 10.6:1.
+   Os dois sentidos passam WCAG AAA.
+
+   Escala de raio, aplicada sem excecao:
+     botoes e pills .... arredondamento total
+     cards ............. --radius (16px)
+     campos de formulario 10px
+--------------------------------------------------------------------------- */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Tokens proprios da marca, fora do vocabulario do shadcn. */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-dim: var(--brand-dim);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/*
+  :root e .dark carregam os mesmos valores de proposito. O ThemeProvider aplica
+  a classe .dark, mas o site nao deve piscar nem quebrar caso ela nao chegue.
+*/
+:root,
+.dark {
+  --radius: 1rem;
+
+  --background: #05070b;
+  --foreground: #f2f5f8;
+
+  --surface: #0b0f16;
+  --surface-raised: #121926;
+  --hairline: #1b2431;
+  --hairline-strong: #2a3547;
+
+  --brand: #2dd4a7;
+  --brand-foreground: #04120d;
+  --brand-dim: #17705a;
+
+  --card: #0b0f16;
+  --card-foreground: #f2f5f8;
+  --popover: #0b0f16;
+  --popover-foreground: #f2f5f8;
+
+  /* Primario e a cor de marca: os CTAs herdam o acento automaticamente. */
+  --primary: #2dd4a7;
+  --primary-foreground: #04120d;
+
+  /*
+    No shadcn, --accent e a superficie de hover de menus e itens de lista, nao a
+    cor da marca. Pintar isso de teal deixaria todo hover do site verde.
+  */
+  --accent: #121926;
+  --accent-foreground: #f2f5f8;
+  --secondary: #121926;
+  --secondary-foreground: #f2f5f8;
+  --muted: #121926;
+  --muted-foreground: #8a97a6;
+
+  --destructive: #f87171;
+  --destructive-foreground: #1a0505;
+
+  --border: #1b2431;
+  --input: #1b2431;
+  --ring: #2dd4a7;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Compensa o cabecalho fixo quando o usuario pula por ancora. */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Um anel de foco visivel e consistente, sem remover o padrao do teclado. */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--brand-foreground);
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+      max-width: 1240px;
+    }
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+}
+
+@layer utilities {
+  /*
+    A malha: o elemento de identidade da Pattern Nexus. Aparece como fundo
+    discreto, nunca como decoracao gratuita. O mask garante que ela desapareca
+    nas bordas em vez de cortar em linha reta.
+  */
+  .lattice-grid {
+    background-image:
+      linear-gradient(to right, var(--hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--hairline) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  .lattice-fade {
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 75%);
+  }
+
+  /* Regua tipografica de rotulo tecnico. Usada com muita parcimonia. */
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Numeros sempre tabulares: evita o texto dancando durante contagens. */
+  .tabular {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /*
+    Linha gerada pelo SplitText com mask: "lines".
+
+    A mascara usa overflow escondido, e isso corta a perna das letras com
+    descendente (g, p, q) enquanto a linha esta parada. O padding devolve o
+    espaco e a margem negativa o retira do fluxo, entao a entrelinha do titulo
+    continua exatamente a que o design pediu.
+  */
+  .split-line {
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+  }
+
+  /*
+    A casca de card das secoes novas.
+
+    Na referencia cada card tem um halo colorido difuso vazando de um canto. Lá
+    sao varias cores; aqui e uma so, porque o sistema visual da Pattern Nexus
+    tem um acento unico. A variacao vem da POSICAO e da intensidade do halo, o
+    que dá diferenca entre cards sem inventar cor nova na paleta.
+  */
+  .card-shell {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: calc(var(--radius) + 8px);
+    background: linear-gradient(180deg, var(--surface) 0%, #080c12 100%);
+    border: 1px solid var(--hairline);
+    transition:
+      border-color 400ms ease,
+      transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-shell::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: auto -20% -60% -20%;
+    height: 70%;
+    background: radial-gradient(
+      ellipse 50% 100% at var(--glow-x, 50%) 100%,
+      color-mix(in oklab, var(--brand) 26%, transparent) 0%,
+      transparent 70%
+    );
+    opacity: 0.55;
+    transition: opacity 500ms ease;
+  }
+
+  .card-shell:hover {
+    border-color: color-mix(in oklab, var(--brand) 34%, var(--hairline));
+  }
+
+  .card-shell:hover::after {
+    opacity: 0.9;
+  }
+
+}
+
+/*
+  Glitch de troca de palavra (padrao <-> Pattern, no hero).
+
+  A aberracao cromatica classica usa ciano e magenta. Aqui nao: seriam duas
+  cores novas na pagina so para durar 340ms, e o site tem um acento so. Os dois
+  ecos usam --brand e branco em mix-blend-mode: screen, entao o deslocamento
+  aparece como brilho e nao como cor estranha.
+
+  Os ecos vivem em ::before/::after com content: attr(data-text) porque a
+  palavra muda a cada frame durante o embaralhamento; ler o texto do atributo
+  mantem as tres camadas em sincronia sem tres nos no DOM.
+*/
+.glitch-word {
+  position: relative;
+  transition: opacity 200ms ease;
+}
+
+.glitch-word[data-fading] {
+  opacity: 0;
+}
+
+.glitch-word::before,
+.glitch-word::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  white-space: pre;
+  mix-blend-mode: screen;
+}
+
+.glitch-word[data-glitching] {
+  animation: glitch-jolt 340ms steps(2, end) both;
+}
+
+/* Camada de pixels bugados */
+.glitch-pixel-overlay {
+  position: absolute;
+  inset: -2px -4px;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent 0%, rgba(45, 212, 167, 0.2) 2%, transparent 4%),
+    repeating-linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 2%, transparent 4%);
+  background-size: 4px 4px;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: overlay;
+  animation: glitch-pixels 340ms steps(3) infinite;
+}
+
+/* Ecos de aberracao cromatica */
+.glitch-echo-a,
+.glitch-echo-b {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  white-space: pre;
+  mix-blend-mode: screen;
+  z-index: -1;
+}
+
+.glitch-echo-a {
+  color: var(--brand);
+  animation: glitch-echo-a 340ms steps(2, end) both;
+}
+
+.glitch-echo-b {
+  color: #ffffff;
+  animation: glitch-echo-b 340ms steps(2, end) both;
+}
+
+@keyframes glitch-pixels {
+  0% { background-position: 0 0; }
+  100% { background-position: 10px 10px; }
+}
+
+/* Tremor da camada principal */
+@keyframes glitch-jolt {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  22% {
+    transform: translate3d(-1px, 1px, 0);
+  }
+  48% {
+    transform: translate3d(1px, -1px, 0);
+  }
+  74% {
+    transform: translate3d(-1px, 0, 0);
+  }
+}
+
+/* Eco esquerdo: fatias horizontais deslocadas, some antes do fim. */
+@keyframes glitch-echo-a {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  14% {
+    opacity: 0.8;
+    transform: translate3d(-3px, 0, 0);
+    clip-path: inset(0 0 58% 0);
+  }
+  42% {
+    opacity: 0.65;
+    transform: translate3d(-2px, 1px, 0);
+    clip-path: inset(64% 0 0 0);
+  }
+  68% {
+    opacity: 0.5;
+    transform: translate3d(-3px, 0, 0);
+    clip-path: inset(28% 0 44% 0);
+  }
+  86% {
+    opacity: 0;
+  }
+}
+
+/* Eco direito: espelhado, em fatias diferentes para nao virar sombra dupla. */
+@keyframes glitch-echo-b {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  14% {
+    opacity: 0.55;
+    transform: translate3d(3px, 0, 0);
+    clip-path: inset(46% 0 0 0);
+  }
+  42% {
+    opacity: 0.7;
+    transform: translate3d(2px, -1px, 0);
+    clip-path: inset(0 0 70% 0);
+  }
+  68% {
+    opacity: 0.4;
+    transform: translate3d(3px, 1px, 0);
+    clip-path: inset(52% 0 22% 0);
+  }
+  86% {
+    opacity: 0;
+  }
+}
+
+/*
+  Granulacao de filme. Fixa e sem eventos de ponteiro, conforme a regra de
+  performance: aplicar em container que rola forca repaint continuo de GPU.
+*/
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 999px;
+  border: 3px solid var(--background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/*
+  Rede de seguranca global para movimento reduzido. Cada componente tambem
+  trata isso via useReducedMotion, mas nada deve escapar por esquecimento.
+
+  A guarda `:not(.force-motion)` e o lado CSS do override em
+  lib/motion-preference.ts: media query em folha de estilo nao passa pelo patch
+  de matchMedia, entao a classe no <html> e o que desliga a rede aqui.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) {
+    scroll-behavior: auto;
+  }
+
+  html:not(.force-motion) *,
+  html:not(.force-motion) *::before,
+  html:not(.force-motion) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html:not(.force-motion) .grain-overlay {
+    display: none;
+  }
+
+  /*
+    Excecao consciente a rede acima. Reduzir movimento nao e apagar a pagina: o
+    tremor e o embaralhamento saem (o componente nem os dispara), mas a troca de
+    palavra continua acontecendo em crossfade lento, que nao desloca nada.
+  */
+  html:not(.force-motion) .glitch-word {
+    transition-duration: 200ms !important;
+  }
+}
+
