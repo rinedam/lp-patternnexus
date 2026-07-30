@@ -4,6 +4,8 @@ import * as React from "react";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Mail, MessageCircle } from "lucide-react";
+import { contact, cta, whatsappUrl } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import "./motion-footer.css";
 
@@ -174,18 +176,26 @@ export function CinematicFooter() {
     <>
 
       
-      {/* 
+      {/*
         The "Curtain Reveal" Wrapper:
         It sits in standard flow. Because it has clip-path, its contents
-        are ONLY visible within its bounding box. 
+        are ONLY visible within its bounding box.
+      */}
+      {/*
+        Abaixo de lg o rodape sai do modo "pinado" (fixed + h-[70vh] dentro de
+        um espacador h-screen). Com pouca altura de tela e texto que quebra
+        linha, o conteudo passava dos 70vh e o overflow-hidden cortava metade
+        do rodape no celular. Em fluxo normal (relative, altura automatica) o
+        conteudo nunca estoura o proprio container, porque o container e do
+        tamanho do conteudo.
       */}
       <div
         ref={wrapperRef}
-        className="relative h-screen w-full"
+        className="relative w-full lg:h-screen"
         style={{ clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)" }}
       >
-        {/* The actual footer stays fixed to the viewport underneath everything */}
-        <footer className="fixed bottom-0 left-0 flex h-[70vh] w-full flex-col justify-between overflow-hidden bg-background text-foreground cinematic-footer-wrapper">
+        {/* Acima de lg o rodape fica fixed, revelado por baixo do espacador acima. */}
+        <footer className="relative flex w-full flex-col justify-between overflow-hidden bg-background text-foreground cinematic-footer-wrapper lg:fixed lg:bottom-0 lg:left-0 lg:h-[70vh]">
           
           {/*
             Ambient Light & Grid Background.
@@ -209,10 +219,17 @@ export function CinematicFooter() {
             congelado com a largura da fonte de fallback e nunca mais recalculado
             - a palavra saia do centro quando a webfont chegava e ia para fora da
             tela em qualquer resize.
+
+            `hidden lg:block`: o `bottom-[5vh]` mede a partir da base do
+            proprio rodape, que abaixo de lg tem altura automatica (variavel
+            com o conteudo) em vez dos 70vh fixos. Com conteudo mais alto que
+            a tela, esses 5vh iam bater perto ou em cima da barra de rodape
+            (copyright / voltar ao topo). E so marca d'agua decorativa; some
+            no celular em vez de arriscar a sobreposicao.
           */}
           <div
             ref={giantTextRef}
-            className="footer-giant-bg-text absolute bottom-[5vh] inset-x-0 whitespace-nowrap z-0 pointer-events-none select-none text-center"
+            className="footer-giant-bg-text absolute bottom-[5vh] inset-x-0 hidden whitespace-nowrap z-0 pointer-events-none select-none text-center lg:block"
           >
             PATTERN NEXUS
           </div>
@@ -241,22 +258,36 @@ export function CinematicFooter() {
               Prontos para começar?
             </h2>
 
-            {/* Interactive Magnetic Pills Layout */}
+            {/*
+              Canais diretos, nao apps.
+
+              Um site institucional de automacao/IA nao tem app de celular, e
+              os dois pills de app store apontavam para "#" - link morto e
+              promessa que o site nao cumpre. No lugar entram os mesmos dois
+              canais que o resto do site usa para contato (Contact.tsx),
+              porque este e o ultimo convite a agir antes do fim da pagina.
+            */}
             <div ref={linksRef} className="flex flex-col items-center gap-6 w-full">
-              {/* App Store Links (Primary) */}
+              {/* Canais de contato (Primario) */}
               <div className="flex flex-wrap justify-center gap-4 w-full">
-                <MagneticButton as="a" href="#" className="footer-glass-pill px-10 py-5 rounded-full text-foreground font-bold text-sm md:text-base flex items-center gap-3 group">
-                  <svg className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.79 3.59-.76 1.56.04 2.87.67 3.55 1.76-3.13 1.77-2.62 5.92.35 7.14-.65 1.58-1.57 3.1-2.57 4.03zm-3.21-14.7c-.55 1.4-1.89 2.37-3.25 2.28.09-1.5 1.05-2.82 2.38-3.4 1.25-.57 2.66-.41 3.25.04-.15.35-.26.72-.38 1.08z" />
-                  </svg>
-                  Download iOS
+                <MagneticButton
+                  as="a"
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-glass-pill px-10 py-5 rounded-full text-foreground font-bold text-sm md:text-base flex items-center gap-3 group"
+                >
+                  <MessageCircle className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  {cta.primary}
                 </MagneticButton>
-                
-                <MagneticButton as="a" href="#" className="footer-glass-pill px-10 py-5 rounded-full text-foreground font-bold text-sm md:text-base flex items-center gap-3 group">
-                  <svg className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0004.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0004.5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0222 3.503C15.5902 8.242 13.8533 7.85 12 7.85c-1.8533 0-3.5902.392-5.1369 1.1004L4.841 5.4475a.416.416 0 00-.5676-.1521.416.416 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3436-4.1021-2.6893-7.5743-6.1185-9.4396" />
-                  </svg>
-                  Download Android
+
+                <MagneticButton
+                  as="a"
+                  href={`mailto:${contact.email}`}
+                  className="footer-glass-pill px-10 py-5 rounded-full text-foreground font-bold text-sm md:text-base flex items-center gap-3 group"
+                >
+                  <Mail className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  Enviar e-mail
                 </MagneticButton>
               </div>
 
@@ -275,9 +306,16 @@ export function CinematicFooter() {
             </div>
           </div>
 
-          {/* 3. Bottom Bar / Credits */} 
-          <div className="relative z-20 w-full pb-8 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
-            
+          {/*
+            3. Bottom Bar / Credits
+
+            `mt-16 pt-8 border-t` so valem abaixo de lg: la o `justify-between`
+            do rodape (dentro da caixa fixa de 70vh) ja abre esse espaco
+            sozinho, e duplicar a margem via classe empurraria a barra para
+            fora da caixa.
+          */}
+          <div className="relative z-20 mt-16 w-full border-t border-hairline px-6 pb-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-6 lg:mt-0 lg:border-t-0 lg:pt-0 md:px-12">
+
             {/* Copyright */}
             <div className="text-muted-foreground text-[10px] md:text-xs font-semibold tracking-widest uppercase order-2 md:order-1">
               © 2026 Pattern Nexus. All rights reserved.
