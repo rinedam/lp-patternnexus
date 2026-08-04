@@ -200,22 +200,22 @@ export const pipeline = [
  */
 export const team = [
   {
+    id: "rinedam",
+    name: "Gustavo Rinedam",
+    role: "CEO & Desenvolvedor",
+    photo: "/images/socio-rinedam.jpeg",
+  },
+  {
     id: "rick",
-    name: "Rick",
-    role: "Cargo pendente",
+    name: "Luiz Kostiuk",
+    role: "CEO & Financeiro",
     photo: "/images/socio-rick.jpeg",
   },
   {
     id: "joaov",
-    name: "João V.",
-    role: "Cargo pendente",
+    name: "João Vinicius",
+    role: "CEO & Comercial",
     photo: "/images/socio-joaov.jpeg",
-  },
-  {
-    id: "rinedam",
-    name: "Rinedam",
-    role: "Cargo pendente",
-    photo: "/images/socio-rinedam.jpeg",
   },
 ] as const;
 
