@@ -79,7 +79,7 @@ export default function NexusHand() {
           {videoEnded && (
             <img
               src="/images/estatico final.png"
-              alt="Nexus final frame"
+              alt="Símbolo Pattern Nexus segurado na mão, quatro nós conectados a um centro"
               className="w-full h-full object-cover transition-transform duration-300 ease-in-out"
             />
           )}

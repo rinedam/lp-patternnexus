@@ -197,7 +197,7 @@ export function TeamSection({
                   >
                     <img
                       src={member.photo}
-                      alt={member.alt ?? `Retrato de ${member.name}`}
+                      alt={member.alt ?? `Retrato de ${member.name}, ${member.role} na Pattern Nexus`}
                       loading="lazy"
                       decoding="async"
                       className={cn(

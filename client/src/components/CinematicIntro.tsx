@@ -317,12 +317,12 @@ export function CinematicIntro({
           </div>
 
           <div className="intro-text absolute z-10 w-screen px-6 text-center [transform-style:preserve-3d]">
-            <h1 className="intro-line-1 text-balance text-3xl font-semibold leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <p className="intro-line-1 text-balance text-3xl font-semibold leading-[1.15] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               {tagline1}
-            </h1>
-            <h1 className="intro-line-2 text-balance pb-2 text-3xl font-light leading-[1.15] tracking-tight text-brand sm:text-5xl lg:text-6xl">
+            </p>
+            <p className="intro-line-2 text-balance pb-2 text-3xl font-light leading-[1.15] tracking-tight text-brand sm:text-5xl lg:text-6xl">
               {tagline2}
-            </h1>
+            </p>
           </div>
 
           <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">

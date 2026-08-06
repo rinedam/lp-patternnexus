@@ -28,10 +28,10 @@ export const brand = {
   },
 } as const;
 
-/** PENDENTE: substituir pelos dados reais antes de publicar. */
+/** E-mail temporário: trocar para contato@patternnexus.com.br quando o domínio estiver ativo. */
 export const contact = {
-  email: "contato@patternnexus.com.br",
-  whatsapp: "5500000000000",
+  email: "nexuspattern@gmail.com",
+  whatsapp: "5541919949546",
   whatsappMessage:
     "Olá! Vim pelo site e gostaria de conversar sobre automação para a minha operação.",
 } as const;
